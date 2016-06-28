@@ -1,0 +1,17 @@
+{## Start with  defaults from defaults.yaml ##}
+{% set map = {
+    'Debian':  {
+	'service': 'lldpd',
+	'pkg': 'lldpd'
+    },
+    'RedHat': {
+	'service': 'lldpd',
+	'pkg': 'lldpd.' + grains.get('cpuarch')
+    }
+}
+%}
+{% if grains.get('saltversion', '').startswith('0.17') %}
+{% set lldp = salt['grains.filter_by'](map, merge=salt['pillar.get']('lldp:lookup')) %}
+{% else %}
+{% set lldp = map.get(grains.os_family) %}
+{% endif %}
